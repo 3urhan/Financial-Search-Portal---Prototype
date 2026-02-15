@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Financial Search Portal</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/navigation.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><h1>FinanceHub</h1></a>
+            </div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="mainSearch" 
+                    class="search-input" 
+                    placeholder="Search stocks, bonds, funds, ETFs..."
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+    </header>
+
+    <div class="search-results-page">
+        <div class="container">
+            <div class="results-header">
+                <h1>Search Results</h1>
+                <p id="resultsCount" class="results-count"></p>
+            </div>
+
+            <div id="resultsContainer" class="results-grid">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div id="noResults" class="no-results hidden">
+                <h2>No results found</h2>
+                <p>Try adjusting your search terms</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/router.js"></script>
+    <script>
+        // Get search query from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q') || '';
+        
+        const searchInput = document.getElementById('mainSearch');
+        searchInput.value = query;
+
+        // Display results
+        function displayResults(query) {
+            const results = window.FinancialData.searchItems(query);
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsCount = document.getElementById('resultsCount');
+            const noResults = document.getElementById('noResults');
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '';
+                noResults.classList.remove('hidden');
+                resultsCount.textContent = 'No results found';
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            resultsCount.textContent = `Found ${results.length} result${results.length > 1 ? 's' : ''}`;
+
+            // Group by category
+            const grouped = results.reduce((acc, item) => {
+                if (!acc[item.type]) acc[item.type] = [];
+                acc[item.type].push(item);
+                return acc;
+            }, {});
+
+            resultsContainer.innerHTML = Object.entries(grouped).map(([type, items]) => `
+                <div class="results-category">
+                    <h2 class="category-title">${type}</h2>
+                    <div class="results-list">
+                        ${items.map(item => `
+                            <div class="result-card" data-id="${item.id}">
+                                <div class="result-icon">${item.icon}</div>
+                                <div class="result-info">
+                                    <h3>${item.name}</h3>
+                                    <p class="result-symbol">${item.symbol || item.id}</p>
+                                    <p class="result-description">${item.description || ''}</p>
+                                </div>
+                                <button class="view-btn" onclick="window.location.href='index.html?item=${item.id}'">
+                                    View Details →
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search on input
+        searchInput.addEventListener('input', (e) => {
+            const newQuery = e.target.value;
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('q', newQuery);
+            window.history.pushState({}, '', newUrl);
+            displayResults(newQuery);
+        });
+
+        // Initial display
+        displayResults(query);
+
+        // Enter key redirects to first result
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const results = window.FinancialData.searchItems(searchInput.value);
+                if (results.length > 0) {
+                    window.location.href = `index.html?item=${results[0].id}`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

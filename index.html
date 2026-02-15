@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Search Portal - Prototype</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/navigation.css">
+</head>
+<body>
+    <!-- Header with Search -->
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <h1>FinanceHub</h1>
+            </div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="mainSearch" 
+                    class="search-input" 
+                    placeholder="Search stocks, bonds, funds, ETFs..."
+                    autocomplete="off"
+                >
+                <div id="searchDropdown" class="search-dropdown hidden"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Recent Views</h3>
+                    <ul id="recentNav" class="nav-list">
+                        <li class="nav-item empty-state">No recent items</li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Categories</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#" data-category="stocks">
+                                <span class="icon">📈</span>
+                                Stocks
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" data-category="bonds">
+                                <span class="icon">🏦</span>
+                                Bonds
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" data-category="etfs">
+                                <span class="icon">📊</span>
+                                ETFs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" data-category="mutual-funds">
+                                <span class="icon">💼</span>
+                                Mutual Funds
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="mainContent">
+            <div class="welcome-screen">
+                <div class="welcome-content">
+                    <h2>Welcome to FinanceHub</h2>
+                    <p>Search for any financial instrument to get started</p>
+                    <div class="quick-links">
+                        <h3>Popular Searches:</h3>
+                        <div class="tag-list">
+                            <button class="tag" data-search="AAPL">Apple (AAPL)</button>
+                            <button class="tag" data-search="MSFT">Microsoft (MSFT)</button>
+                            <button class="tag" data-search="GOOGL">Google (GOOGL)</button>
+                            <button class="tag" data-search="SPY">S&P 500 ETF (SPY)</button>
+                            <button class="tag" data-search="US Treasury">US Treasury Bonds</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Profile Navigation Overlay -->
+    <div id="profileOverlay" class="profile-overlay hidden">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <div class="overlay-title">
+                    <h2 id="overlayTitle">Loading...</h2>
+                    <p id="overlaySubtitle" class="subtitle"></p>
+                </div>
+                <button class="close-btn" id="closeOverlay">&times;</button>
+            </div>
+            <nav class="overlay-navigation">
+                <h3>Table of Contents</h3>
+                <ul id="overlayNav" class="overlay-nav-list">
+                    <!-- Dynamically populated -->
+                </ul>
+            </nav>
+        </div>
+        <div class="overlay-backdrop" id="overlayBackdrop"></div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts - ORDER IS IMPORTANT -->
+    <script src="js/data.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/search.js"></script>
+    
+    <!-- Test script to verify everything is loaded -->
+    <script>
+        console.log('Page loaded');
+        console.log('FinancialData available:', typeof window.FinancialData !== 'undefined');
+        console.log('Router available:', typeof window.Router !== 'undefined');
+        console.log('Navigation available:', typeof window.Navigation !== 'undefined');
+        console.log('Search available:', typeof window.Search !== 'undefined');
+        
+        // Test search functionality
+        if (window.FinancialData) {
+            console.log('Sample search for "apple":', window.FinancialData.searchItems('apple'));
+        }
+    </script>
+</body>
+</html>
