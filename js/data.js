@@ -1,7 +1,6 @@
 /**
  * Financial Data Registry
- * This file contains all financial items searchable in the system
- * Add new items here to make them searchable and routable
+ * This file contains all financial items searchable in the system.
  */
 
 const FinancialData = {
@@ -12,7 +11,7 @@ const FinancialData = {
             name: 'Apple Inc.',
             symbol: 'AAPL',
             type: 'Stocks',
-            icon: '🍎',
+            icon: 'STK',
             description: 'Technology company specializing in consumer electronics',
             page: 'pages/stocks/aapl.html',
             sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts']
@@ -22,7 +21,7 @@ const FinancialData = {
             name: 'Microsoft Corporation',
             symbol: 'MSFT',
             type: 'Stocks',
-            icon: '💻',
+            icon: 'STK',
             description: 'Technology corporation developing software and services',
             page: 'pages/stocks/msft.html',
             sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts']
@@ -32,7 +31,7 @@ const FinancialData = {
             name: 'Alphabet Inc.',
             symbol: 'GOOGL',
             type: 'Stocks',
-            icon: '🔍',
+            icon: 'STK',
             description: 'Parent company of Google and subsidiaries',
             page: 'pages/stocks/googl.html',
             sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts']
@@ -42,29 +41,31 @@ const FinancialData = {
             name: 'Amazon.com Inc.',
             symbol: 'AMZN',
             type: 'Stocks',
-            icon: '📦',
+            icon: 'STK',
             description: 'E-commerce and cloud computing company',
-            page: 'pages/stocks/aapl.html', // Reusing template for demo
-            sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts']
+            page: 'pages/stocks/aapl.html',
+            sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts'],
+            isTemplate: true
         },
         {
             id: 'tsla',
             name: 'Tesla Inc.',
             symbol: 'TSLA',
             type: 'Stocks',
-            icon: '⚡',
+            icon: 'STK',
             description: 'Electric vehicle and clean energy company',
             page: 'pages/stocks/aapl.html',
-            sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts']
+            sections: ['Overview', 'Financials', 'News & Analysis', 'Historical Data', 'Charts'],
+            isTemplate: true
         },
-        
+
         // Bonds
         {
             id: 'us-treasury',
             name: 'US Treasury Bonds',
             symbol: 'US10Y',
             type: 'Bonds',
-            icon: '🏦',
+            icon: 'BND',
             description: '10-Year US Government Bonds',
             page: 'pages/bonds/us-treasury.html',
             sections: ['Overview', 'Yield Analysis', 'Historical Performance', 'Market Trends']
@@ -74,51 +75,55 @@ const FinancialData = {
             name: 'Corporate Bonds',
             symbol: 'CORP',
             type: 'Bonds',
-            icon: '💼',
+            icon: 'BND',
             description: 'Investment grade corporate bonds',
             page: 'pages/bonds/us-treasury.html',
-            sections: ['Overview', 'Yield Analysis', 'Historical Performance', 'Market Trends']
+            sections: ['Overview', 'Yield Analysis', 'Historical Performance', 'Market Trends'],
+            isTemplate: true
         },
-        
+
         // ETFs
         {
             id: 'spy',
             name: 'SPDR S&P 500 ETF',
             symbol: 'SPY',
             type: 'ETFs',
-            icon: '📊',
+            icon: 'ETF',
             description: 'Tracks the S&P 500 index',
             page: 'pages/stocks/aapl.html',
-            sections: ['Overview', 'Holdings', 'Performance', 'Distributions', 'Analysis']
+            sections: ['Overview', 'Holdings', 'Performance', 'Distributions', 'Analysis'],
+            isTemplate: true
         },
         {
             id: 'qqq',
             name: 'Invesco QQQ Trust',
             symbol: 'QQQ',
             type: 'ETFs',
-            icon: '💹',
+            icon: 'ETF',
             description: 'Tracks the Nasdaq-100 index',
             page: 'pages/stocks/aapl.html',
-            sections: ['Overview', 'Holdings', 'Performance', 'Distributions', 'Analysis']
+            sections: ['Overview', 'Holdings', 'Performance', 'Distributions', 'Analysis'],
+            isTemplate: true
         },
         {
             id: 'vti',
             name: 'Vanguard Total Stock Market ETF',
             symbol: 'VTI',
             type: 'ETFs',
-            icon: '🎯',
+            icon: 'ETF',
             description: 'Broad US stock market exposure',
             page: 'pages/stocks/aapl.html',
-            sections: ['Overview', 'Holdings', 'Performance', 'Distributions', 'Analysis']
+            sections: ['Overview', 'Holdings', 'Performance', 'Distributions', 'Analysis'],
+            isTemplate: true
         },
-        
+
         // Mutual Funds
         {
             id: 'vanguard-500',
             name: 'Vanguard 500 Index Fund',
             symbol: 'VFIAX',
             type: 'Mutual Funds',
-            icon: '💰',
+            icon: 'FND',
             description: 'Index fund tracking S&P 500',
             page: 'pages/funds/vanguard-500.html',
             sections: ['Overview', 'Portfolio', 'Performance', 'Fees & Expenses', 'Analysis']
@@ -128,11 +133,12 @@ const FinancialData = {
             name: 'Fidelity Total Market Index Fund',
             symbol: 'FSKAX',
             type: 'Mutual Funds',
-            icon: '🏛️',
+            icon: 'FND',
             description: 'Total US stock market index fund',
             page: 'pages/funds/vanguard-500.html',
-            sections: ['Overview', 'Portfolio', 'Performance', 'Fees & Expenses', 'Analysis']
-        },
+            sections: ['Overview', 'Portfolio', 'Performance', 'Fees & Expenses', 'Analysis'],
+            isTemplate: true
+        }
     ],
 
     /**
@@ -146,15 +152,13 @@ const FinancialData = {
         }
 
         const searchTerm = query.toLowerCase();
-        
-        return this.items.filter(item => {
-            return (
-                item.name.toLowerCase().includes(searchTerm) ||
-                item.symbol.toLowerCase().includes(searchTerm) ||
-                item.type.toLowerCase().includes(searchTerm) ||
-                (item.description && item.description.toLowerCase().includes(searchTerm))
-            );
-        });
+
+        return this.items.filter((item) => (
+            item.name.toLowerCase().includes(searchTerm) ||
+            item.symbol.toLowerCase().includes(searchTerm) ||
+            item.type.toLowerCase().includes(searchTerm) ||
+            (item.description && item.description.toLowerCase().includes(searchTerm))
+        ));
     },
 
     /**
@@ -163,7 +167,7 @@ const FinancialData = {
      * @returns {Object|null} Item or null
      */
     getItemById(id) {
-        return this.items.find(item => item.id === id) || null;
+        return this.items.find((item) => item.id === id) || null;
     },
 
     /**
@@ -172,9 +176,8 @@ const FinancialData = {
      * @returns {Array} Matching items
      */
     getItemsByType(type) {
-        return this.items.filter(item => item.type.toLowerCase() === type.toLowerCase());
+        return this.items.filter((item) => item.type.toLowerCase() === type.toLowerCase());
     }
 };
 
-// Make globally available
 window.FinancialData = FinancialData;

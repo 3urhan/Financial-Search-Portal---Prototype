@@ -269,6 +269,17 @@ body {
     animation: fadeIn 0.3s ease;
 }
 
+.template-banner {
+    margin-bottom: 18px;
+    padding: 10px 12px;
+    border: 1px solid #fcd34d;
+    background: #fffbeb;
+    color: #92400e;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

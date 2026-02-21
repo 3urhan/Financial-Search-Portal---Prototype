@@ -26,7 +26,6 @@ const Search = {
      * Setup event listeners
      */
     setupEventListeners() {
-        // Input event with debounce
         this.searchInput.addEventListener('input', (e) => {
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
@@ -34,11 +33,10 @@ const Search = {
             }, 200);
         });
 
-        // Keyboard navigation
         this.searchInput.addEventListener('keydown', (e) => {
             if (!this.searchDropdown || this.searchDropdown.classList.contains('hidden')) return;
 
-            switch(e.key) {
+            switch (e.key) {
                 case 'ArrowDown':
                     e.preventDefault();
                     this.navigateResults(1);
@@ -57,14 +55,12 @@ const Search = {
             }
         });
 
-        // Click outside to close
         document.addEventListener('click', (e) => {
             if (!this.searchInput.contains(e.target) && !this.searchDropdown?.contains(e.target)) {
                 this.hideDropdown();
             }
         });
 
-        // Focus shows recent results
         this.searchInput.addEventListener('focus', () => {
             if (this.searchInput.value.trim() === '') {
                 this.showRecentSearches();
@@ -96,16 +92,16 @@ const Search = {
         if (!this.searchDropdown) return;
 
         if (results.length === 0) {
+            const safeQuery = this.escapeHtml(query);
             this.searchDropdown.innerHTML = `
                 <div class="search-no-results">
-                    <p>No results found for "${query}"</p>
+                    <p>No results found for "${safeQuery}"</p>
                 </div>
             `;
             this.searchDropdown.classList.remove('hidden');
             return;
         }
 
-        // Group by type
         const grouped = results.reduce((acc, item) => {
             if (!acc[item.type]) acc[item.type] = [];
             acc[item.type].push(item);
@@ -113,26 +109,25 @@ const Search = {
         }, {});
 
         let html = '';
-        
+
         Object.entries(grouped).forEach(([type, items]) => {
-            html += `<div class="search-category-header">${type}</div>`;
-            items.slice(0, 5).forEach((item, index) => {
+            html += `<div class="search-category-header">${this.escapeHtml(type)}</div>`;
+            items.slice(0, 5).forEach((item) => {
                 html += `
-                    <div class="search-result-item" data-index="${results.indexOf(item)}" data-item-id="${item.id}">
-                        <div class="search-result-icon">${item.icon}</div>
+                    <div class="search-result-item" data-index="${results.indexOf(item)}" data-item-id="${this.escapeHtml(item.id)}">
+                        <div class="search-result-icon">${this.escapeHtml(item.icon || '')}</div>
                         <div class="search-result-info">
                             <div class="search-result-name">${this.highlightQuery(item.name, query)}</div>
-                            <div class="search-result-meta">${item.symbol} • ${item.type}</div>
+                            <div class="search-result-meta">${this.escapeHtml(item.symbol || '')} - ${this.escapeHtml(item.type || '')}</div>
                         </div>
                     </div>
                 `;
             });
         });
 
-        // Add "View All" if many results
         if (results.length > 10) {
             html += `
-                <div class="search-view-all" data-query="${query}">
+                <div class="search-view-all" data-query="${this.escapeHtml(query)}">
                     View all ${results.length} results
                 </div>
             `;
@@ -141,27 +136,18 @@ const Search = {
         this.searchDropdown.innerHTML = html;
         this.searchDropdown.classList.remove('hidden');
 
-        // Add click handlers
-        this.searchDropdown.querySelectorAll('.search-result-item').forEach(item => {
+        this.searchDropdown.querySelectorAll('.search-result-item').forEach((item) => {
             item.addEventListener('click', () => {
                 const itemId = item.dataset.itemId;
-                // const financialItem = window.FinancialData.getItemById(itemId);
-                // if (financialItem && window.Navigation) {
-                //     window.Navigation.showProfileOverlay(financialItem);
-            //         this.hideDropdown();
-            //         this.searchInput.value = '';
-            //     }
-            // });
-                 if (window.Router) {
-            window.Router.navigateTo(itemId);
-             }
-        
-        this.hideDropdown();
-        this.searchInput.value = '';
-    });
+                if (window.Router) {
+                    window.Router.navigateTo(itemId);
+                }
+
+                this.hideDropdown();
+                this.searchInput.value = '';
+            });
         });
 
-        // View all handler
         const viewAll = this.searchDropdown.querySelector('.search-view-all');
         if (viewAll) {
             viewAll.addEventListener('click', () => {
@@ -176,7 +162,7 @@ const Search = {
      * Show recent searches
      */
     showRecentSearches() {
-        if (!this.searchDropdown) return;
+        if (!this.searchDropdown || !window.Router) return;
 
         const recentItems = window.Router.recentItems.slice(0, 5);
 
@@ -186,14 +172,14 @@ const Search = {
         }
 
         let html = '<div class="search-category-header">Recent</div>';
-        
-        recentItems.forEach(item => {
+
+        recentItems.forEach((item) => {
             html += `
-                <div class="search-result-item" data-item-id="${item.id}">
-                    <div class="search-result-icon">${item.icon}</div>
+                <div class="search-result-item" data-item-id="${this.escapeHtml(item.id)}">
+                    <div class="search-result-icon">${this.escapeHtml(item.icon || '')}</div>
                     <div class="search-result-info">
-                        <div class="search-result-name">${item.name}</div>
-                        <div class="search-result-meta">${item.symbol} • ${item.type}</div>
+                        <div class="search-result-name">${this.escapeHtml(item.name || '')}</div>
+                        <div class="search-result-meta">${this.escapeHtml(item.symbol || '')} - ${this.escapeHtml(item.type || '')}</div>
                     </div>
                 </div>
             `;
@@ -202,12 +188,11 @@ const Search = {
         this.searchDropdown.innerHTML = html;
         this.searchDropdown.classList.remove('hidden');
 
-        // Add click handlers
-        this.searchDropdown.querySelectorAll('.search-result-item').forEach(item => {
+        this.searchDropdown.querySelectorAll('.search-result-item').forEach((item) => {
             item.addEventListener('click', () => {
                 const itemId = item.dataset.itemId;
                 const financialItem = window.FinancialData.getItemById(itemId);
-                if (financialItem) {
+                if (financialItem && window.Router) {
                     window.Router.navigateTo(itemId);
                     this.hideDropdown();
                     this.searchInput.value = '';
@@ -224,21 +209,18 @@ const Search = {
         const items = this.searchDropdown.querySelectorAll('.search-result-item');
         if (items.length === 0) return;
 
-        // Remove active class from current
         if (this.activeIndex >= 0 && items[this.activeIndex]) {
             items[this.activeIndex].classList.remove('active');
         }
 
-        // Update index
         this.activeIndex += direction;
-        
+
         if (this.activeIndex < 0) {
             this.activeIndex = items.length - 1;
         } else if (this.activeIndex >= items.length) {
             this.activeIndex = 0;
         }
 
-        // Add active class to new
         items[this.activeIndex].classList.add('active');
         items[this.activeIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     },
@@ -270,19 +252,44 @@ const Search = {
      * @returns {string} HTML with highlighted text
      */
     highlightQuery(text, query) {
-        if (!query) return text;
-        
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<strong>$1</strong>');
+        const safeText = this.escapeHtml(text || '');
+        if (!query) return safeText;
+
+        const escapedQuery = this.escapeRegExp(query);
+        if (!escapedQuery) return safeText;
+
+        const regex = new RegExp(`(${escapedQuery})`, 'gi');
+        return safeText.replace(regex, '<strong>$1</strong>');
+    },
+
+    /**
+     * Escape regex metacharacters from user input
+     * @param {string} value - Raw value
+     * @returns {string} Escaped value
+     */
+    escapeRegExp(value) {
+        return (value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    },
+
+    /**
+     * Escape HTML entities before injecting into innerHTML
+     * @param {string} value - Raw value
+     * @returns {string} Escaped HTML string
+     */
+    escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 };
 
-// Initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => Search.init());
 } else {
     Search.init();
 }
 
-// Make globally available
 window.Search = Search;
